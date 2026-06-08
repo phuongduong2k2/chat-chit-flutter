@@ -29,9 +29,14 @@ void showSnackBar(
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(message),
+      persist: false,
       backgroundColor: snackBarType == SnackBarType.success
           ? Colors.green
           : Colors.red,
+      action: SnackBarAction(
+        label: "Ok",
+        onPressed: ScaffoldMessenger.of(context).hideCurrentSnackBar,
+      ),
     ),
   );
 }

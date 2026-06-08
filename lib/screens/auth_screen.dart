@@ -1,20 +1,23 @@
 import 'dart:io';
 
 import 'package:chat_chit_flutter/extensions/exception_extension.dart';
+import 'package:chat_chit_flutter/providers/user_provider.dart';
+import 'package:chat_chit_flutter/screens/chat_screen.dart';
 import 'package:chat_chit_flutter/services/auth_service.dart';
 import 'package:chat_chit_flutter/utils/utils.dart';
 import 'package:chat_chit_flutter/widgets/auth_form.dart';
 import 'package:chat_chit_flutter/widgets/create_account_form.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AuthScreen extends StatefulWidget {
+class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  ConsumerState<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _AuthScreenState extends ConsumerState<AuthScreen> {
   final AuthService authService = AuthService();
   bool _isLoginForm = true;
 
@@ -28,7 +31,14 @@ class _AuthScreenState extends State<AuthScreen> {
     try {
       final result = await authService.login(email: email, password: password);
       if (!mounted) return;
-      showSnackBar(context, "Welcome ${result.username}", .success);
+      ref.read(userProvider.notifier).setUser(result);
+      Navigator.of(
+        context,
+      ).push(
+        MaterialPageRoute(
+          builder: (ctx) => const ChatScreen(),
+        ),
+      );
     } on Exception catch (error) {
       if (!mounted) return;
       showSnackBar(context, error.cleanMessage, .error);
@@ -46,6 +56,7 @@ class _AuthScreenState extends State<AuthScreen> {
         email: email,
         username: username,
         password: password,
+        image: image,
       );
       if (!mounted) return;
       showSnackBar(context, result, .success);

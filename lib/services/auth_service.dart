@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chat_chit_flutter/models/user.dart';
 import 'package:chat_chit_flutter/services/api_client_service.dart';
 
@@ -22,11 +24,25 @@ class AuthService {
     required String email,
     required String username,
     required String password,
+    File? image,
   }) async {
     try {
+      String? imageName;
+      if (image != null) {
+        imageName = await apiClientService.postImage(
+          endpoint: "api/v1/upload",
+          fileToUpload: image,
+          key: "fileName",
+        );
+      }
       final result = await apiClientService.post(
         endpoint: "api/v1/auth/register",
-        body: {"email": email, "username": username, "password": password},
+        body: {
+          "email": email,
+          "username": username,
+          "password": password,
+          "avatarUrl": imageName,
+        },
         key: 'message',
       );
       return result;

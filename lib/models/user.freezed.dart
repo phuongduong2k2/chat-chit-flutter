@@ -210,8 +210,8 @@ return $default(_that.email,_that.username,_that.avatarUrl);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _User implements User {
-  const _User({required this.email, required this.username, this.avatarUrl});
+class _User extends User {
+  const _User({required this.email, required this.username, this.avatarUrl}): super._();
   factory _User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
 @override final  String email;

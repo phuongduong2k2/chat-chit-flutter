@@ -1,5 +1,6 @@
 import 'package:chat_chit_flutter/screens/auth_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final theme = ThemeData().copyWith(
   colorScheme: ColorScheme.fromSeed(
@@ -8,7 +9,7 @@ final theme = ThemeData().copyWith(
 );
 
 void main() {
-  runApp(const MainApp());
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatelessWidget {
