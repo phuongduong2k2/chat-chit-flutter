@@ -3,7 +3,6 @@ import 'package:chat_chit_flutter/providers/user_provider.dart';
 import 'package:chat_chit_flutter/widgets/chat_chit_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
@@ -43,20 +42,33 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Hello ${user.username}"),
-        leading: user.avatarUrl != null
-            ? Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                clipBehavior: .hardEdge,
-                child: FadeInImage(
-                  placeholder: MemoryImage(kTransparentImage),
-                  image: NetworkImage(user.getAvatarUrl()),
-                  fit: .contain,
-                  width: double.infinity,
-                ),
-              )
-            : SizedBox(),
+        leading: Container(
+          height: 80,
+          width: 80,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: BoxBorder.all(
+              width: 1,
+              color: Colors.black.withValues(alpha: 0.2),
+            ),
+          ),
+          clipBehavior: .hardEdge,
+          child: CircleAvatar(
+            radius: 42,
+            child: CircleAvatar(
+              radius: 40,
+              backgroundImage: user.avatarUrl != null
+                  ? NetworkImage(user.getAvatarUrl())
+                  : null,
+              child: user.avatarUrl != null
+                  ? null
+                  : Text(
+                      user.username[0].toUpperCase(),
+                      style: TextStyle(fontSize: 20),
+                    ),
+            ),
+          ),
+        ),
         automaticallyImplyLeading: false,
         centerTitle: false,
         actions: [
