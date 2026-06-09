@@ -9,7 +9,7 @@ class AuthService {
   Future<User> login({required String email, required String password}) async {
     try {
       final result = await apiClientService.post(
-        endpoint: "api/v1/auth/login",
+        endpoint: "/api/v1/auth/login",
         body: {"email": email, "password": password},
         fromJson: User.fromJson,
         key: "userData",
@@ -29,14 +29,14 @@ class AuthService {
     try {
       String? imageName;
       if (image != null) {
-        imageName = await apiClientService.postImage(
-          endpoint: "api/v1/upload",
+        imageName = await apiClientService.postFile(
+          endpoint: "/api/v1/upload",
           fileToUpload: image,
           key: "fileName",
         );
       }
       final result = await apiClientService.post(
-        endpoint: "api/v1/auth/register",
+        endpoint: "/api/v1/auth/register",
         body: {
           "email": email,
           "username": username,
