@@ -4,11 +4,15 @@ import 'package:chat_chit_flutter/services/api_client_service.dart';
 class MessageService {
   static ApiClientService apiClientService = ApiClientService();
 
-  Future<void> sendMessage(String message, String username) async {
+  Future<void> sendMessage(
+    String message,
+    String username,
+    String createdAt,
+  ) async {
     try {
       await apiClientService.post(
         endpoint: '/api/v1/messages/$username',
-        body: {"message": message},
+        body: {"message": message, "createdAt": createdAt},
       );
     } on Exception catch (_) {
       rethrow;

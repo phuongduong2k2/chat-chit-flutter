@@ -1,4 +1,4 @@
-import 'package:chat_chit_flutter/providers/message_provider.dart';
+import 'package:chat_chit_flutter/providers/message_notifier.dart';
 import 'package:chat_chit_flutter/providers/user_provider.dart';
 import 'package:chat_chit_flutter/widgets/left_message.dart';
 import 'package:chat_chit_flutter/widgets/right_message.dart';
@@ -27,24 +27,21 @@ class ChatChitView extends StatelessWidget {
           );
         }
 
-        if (messages.hasValue) {
-          return ListView.separated(
-            itemCount: messages.value!.length,
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            separatorBuilder: (context, index) => SizedBox(
-              height: 10,
-            ),
-            itemBuilder: (ctx, index) {
-              final message = messages.value![index];
-              return SizedBox(
-                child: message.user.username == user.username
-                    ? RightMessage(message: message)
-                    : LeftMessage(message: message),
-              );
-            },
-          );
-        }
-        return Text("EMpty");
+        return ListView.separated(
+          itemCount: messages.value!.length,
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          separatorBuilder: (context, index) => SizedBox(
+            height: 10,
+          ),
+          itemBuilder: (ctx, index) {
+            final message = messages.value![index];
+            return SizedBox(
+              child: message.user.username == user.username
+                  ? RightMessage(message: message)
+                  : LeftMessage(message: message),
+            );
+          },
+        );
       },
     );
   }
