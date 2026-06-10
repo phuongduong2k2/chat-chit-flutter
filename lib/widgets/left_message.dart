@@ -13,21 +13,21 @@ class LeftMessage extends StatelessWidget {
       spacing: 10,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CircleImage(
-          user: message.user,
-          size: 40,
-        ),
+        CircleImage(user: message.user, size: 40),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               message.user.username,
-              style: TextStyle(fontSize: 16, fontWeight: .bold),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             Container(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(10),
                   bottomLeft: Radius.circular(10),
                   bottomRight: Radius.circular(10),
@@ -36,7 +36,7 @@ class LeftMessage extends StatelessWidget {
               ),
               child: Text(
                 message.message,
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],

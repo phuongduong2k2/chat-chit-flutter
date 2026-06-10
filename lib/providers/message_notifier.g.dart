@@ -33,7 +33,7 @@ final class MessageNotifierProvider
   MessageNotifier create() => MessageNotifier();
 }
 
-String _$messageNotifierHash() => r'bc91aeadb7d8b42b26a10827dd9816bd91b6df7a';
+String _$messageNotifierHash() => r'920edf18184c11ca6c29c1918bbfe38e5c067e37';
 
 abstract class _$MessageNotifier extends $AsyncNotifier<List<Message>> {
   FutureOr<List<Message>> build();

@@ -9,7 +9,7 @@ abstract class Message with _$Message {
   const factory Message({
     required User user,
     required String message,
-    required String createdAt,
+    required DateTime createdAt,
   }) = _Message;
 
   factory Message.fromJson(Map<String, Object?> json) =>

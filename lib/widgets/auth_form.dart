@@ -7,9 +7,8 @@ class AuthForm extends StatefulWidget {
     required this.onCreatePressed,
   });
 
-  final Function(String email, String password) onSubmit;
-
-  final Function() onCreatePressed;
+  final void Function(String email, String password) onSubmit;
+  final VoidCallback onCreatePressed;
 
   @override
   State<AuthForm> createState() => _AuthFormState();
@@ -17,26 +16,20 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController(
-    text: "",
-  );
-  final TextEditingController _passwordController = TextEditingController(
-    text: "",
-  );
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
-  void _login() async {
-    bool validate =
-        _formKey.currentState != null && _formKey.currentState!.validate();
-    if (validate) {
+  void _login() {
+    if (_formKey.currentState?.validate() ?? false) {
       widget.onSubmit(_emailController.text, _passwordController.text);
     }
   }
 
   @override
   void dispose() {
-    super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -48,27 +41,25 @@ class _AuthFormState extends State<AuthForm> {
         children: [
           TextFormField(
             controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
             validator: (value) =>
-                value!.isEmpty ? "Email Address is required" : null,
-            decoration: InputDecoration(
-              label: const Text("Email Address"),
-            ),
+                (value == null || value.isEmpty) ? 'Email address is required' : null,
+            decoration: const InputDecoration(label: Text('Email Address')),
           ),
           TextFormField(
             controller: _passwordController,
+            obscureText: true,
             validator: (value) =>
-                value!.isEmpty ? "Password is required" : null,
-            decoration: InputDecoration(
-              label: const Text("Password"),
-            ),
+                (value == null || value.isEmpty) ? 'Password is required' : null,
+            decoration: const InputDecoration(label: Text('Password')),
           ),
           ElevatedButton(
             onPressed: _login,
-            child: const Text("Login"),
+            child: const Text('Login'),
           ),
           TextButton(
             onPressed: widget.onCreatePressed,
-            child: const Text("Create an account"),
+            child: const Text('Create an account'),
           ),
         ],
       ),

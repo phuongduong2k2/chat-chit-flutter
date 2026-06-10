@@ -2,7 +2,7 @@ import 'package:chat_chit_flutter/extensions/exception_extension.dart';
 import 'package:chat_chit_flutter/models/message.dart';
 import 'package:chat_chit_flutter/models/user.dart';
 import 'package:chat_chit_flutter/providers/message_notifier.dart';
-import 'package:chat_chit_flutter/providers/user_provider.dart';
+import 'package:chat_chit_flutter/providers/user_notifier.dart';
 import 'package:chat_chit_flutter/services/message_service.dart';
 import 'package:chat_chit_flutter/utils/utils.dart';
 import 'package:chat_chit_flutter/widgets/chat_chit_view.dart';
@@ -19,18 +19,17 @@ class ChatScreen extends ConsumerStatefulWidget {
 }
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
-  final MessageService messageService = MessageService();
-  UniqueKey _uniqueKey = UniqueKey();
+  final _messageService = MessageService();
 
   void _exitToApp() {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text("Logout?"),
+        title: const Text('Logout?'),
         actions: [
           TextButton(
             onPressed: Navigator.of(ctx).pop,
-            child: Text("No"),
+            child: const Text('No'),
           ),
           TextButton(
             onPressed: () {
@@ -38,59 +37,56 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               Navigator.of(context).pop();
               ref.read(userProvider.notifier).clearUser();
             },
-            child: Text("Yes"),
+            child: const Text('Yes'),
           ),
         ],
       ),
     );
   }
 
-  void _onSubmit(String value, User user) async {
+  Future<void> _onSubmit(String value, User user) async {
     try {
-      final String createdAt = DateTime.now().toString();
-      await messageService.sendMessage(value, user.username, createdAt);
-      final Message newMessage = Message(
-        user: user,
+      final createdAt = DateTime.now();
+      await _messageService.sendMessage(
         message: value,
+        username: user.username,
         createdAt: createdAt,
       );
-      ref.read(messageProvider.notifier).add(newMessage);
-      setState(() {
-        _uniqueKey = UniqueKey();
-      });
+      ref
+          .read(messageProvider.notifier)
+          .add(
+            Message(user: user, message: value, createdAt: createdAt),
+          );
     } on Exception catch (ex) {
       if (!mounted) return;
-      showSnackBar(context, ex.cleanMessage, .error);
+      showSnackBar(context, ex.cleanMessage, SnackBarType.error);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final User user = ref.read(userProvider)!;
+    final user = ref.read(userProvider)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(user.username),
-        leading: CircleImage(
-          user: user,
+    return Consumer(
+      builder: (context, ref, child) => Scaffold(
+        appBar: AppBar(
+          title: Text(user.username),
+          leading: CircleImage(user: user),
+          automaticallyImplyLeading: false,
+          centerTitle: false,
+          actions: [
+            IconButton(
+              onPressed: _exitToApp,
+              icon: const Icon(Icons.exit_to_app),
+            ),
+          ],
         ),
-        automaticallyImplyLeading: false,
-        centerTitle: false,
-        actions: [
-          IconButton(
-            onPressed: _exitToApp,
-            icon: Icon(Icons.exit_to_app),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          const Expanded(child: ChatChitView()),
-          MessageInput(
-            key: _uniqueKey,
-            onSend: (inputValue) => _onSubmit(inputValue, user),
-          ),
-        ],
+        body: Column(
+          children: [
+            const Expanded(child: ChatChitView()),
+            MessageInput(onSend: (value) => _onSubmit(value, user)),
+          ],
+        ),
       ),
     );
   }

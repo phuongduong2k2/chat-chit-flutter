@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Message {
 
- User get user; String get message; String get createdAt;
+ User get user; String get message; DateTime get createdAt;
 /// Create a copy of Message
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $MessageCopyWith<$Res>  {
   factory $MessageCopyWith(Message value, $Res Function(Message) _then) = _$MessageCopyWithImpl;
 @useResult
 $Res call({
- User user, String message, String createdAt
+ User user, String message, DateTime createdAt
 });
 
 
@@ -70,7 +70,7 @@ class _$MessageCopyWithImpl<$Res>
 user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as User,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as String,
+as DateTime,
   ));
 }
 /// Create a copy of Message
@@ -164,7 +164,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( User user,  String message,  String createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( User user,  String message,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Message() when $default != null:
 return $default(_that.user,_that.message,_that.createdAt);case _:
@@ -185,7 +185,7 @@ return $default(_that.user,_that.message,_that.createdAt);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( User user,  String message,  String createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( User user,  String message,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _Message():
 return $default(_that.user,_that.message,_that.createdAt);case _:
@@ -205,7 +205,7 @@ return $default(_that.user,_that.message,_that.createdAt);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( User user,  String message,  String createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( User user,  String message,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Message() when $default != null:
 return $default(_that.user,_that.message,_that.createdAt);case _:
@@ -225,7 +225,7 @@ class _Message implements Message {
 
 @override final  User user;
 @override final  String message;
-@override final  String createdAt;
+@override final  DateTime createdAt;
 
 /// Create a copy of Message
 /// with the given fields replaced by the non-null parameter values.
@@ -260,7 +260,7 @@ abstract mixin class _$MessageCopyWith<$Res> implements $MessageCopyWith<$Res> {
   factory _$MessageCopyWith(_Message value, $Res Function(_Message) _then) = __$MessageCopyWithImpl;
 @override @useResult
 $Res call({
- User user, String message, String createdAt
+ User user, String message, DateTime createdAt
 });
 
 
@@ -282,7 +282,7 @@ class __$MessageCopyWithImpl<$Res>
 user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as User,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as String,
+as DateTime,
   ));
 }
 

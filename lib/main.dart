@@ -2,9 +2,9 @@ import 'package:chat_chit_flutter/screens/auth_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final theme = ThemeData().copyWith(
+final _theme = ThemeData().copyWith(
   colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color.fromARGB(255, 63, 17, 177),
+    seedColor: const Color(0xFF3F11B1),
   ),
 );
 
@@ -17,6 +17,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: "ChatChit", theme: theme, home: AuthScreen());
+    return MaterialApp(
+      title: 'ChatChit',
+      theme: _theme,
+      home: const AuthScreen(),
+    );
   }
 }

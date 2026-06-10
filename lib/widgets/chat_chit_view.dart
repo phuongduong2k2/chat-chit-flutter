@@ -1,48 +1,32 @@
 import 'package:chat_chit_flutter/providers/message_notifier.dart';
-import 'package:chat_chit_flutter/providers/user_provider.dart';
+import 'package:chat_chit_flutter/providers/user_notifier.dart';
 import 'package:chat_chit_flutter/widgets/left_message.dart';
 import 'package:chat_chit_flutter/widgets/right_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ChatChitView extends StatelessWidget {
+class ChatChitView extends ConsumerWidget {
   const ChatChitView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (ctx, ref, child) {
-        final messages = ref.watch(messageProvider);
-        final user = ref.read(userProvider)!;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final messagesAsync = ref.watch(messageProvider);
+    final user = ref.read(userProvider)!;
 
-        if (messages.isLoading) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        if (messages.hasError) {
-          return Center(
-            child: Text("Some thing wrong"),
-          );
-        }
-
-        return ListView.separated(
-          itemCount: messages.value!.length,
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          separatorBuilder: (context, index) => SizedBox(
-            height: 10,
-          ),
-          itemBuilder: (ctx, index) {
-            final message = messages.value![index];
-            return SizedBox(
-              child: message.user.username == user.username
-                  ? RightMessage(message: message)
-                  : LeftMessage(message: message),
-            );
-          },
-        );
-      },
+    return messagesAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (_, e) => const Center(child: Text('Something went wrong')),
+      data: (messages) => ListView.separated(
+        itemCount: messages.length,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        separatorBuilder: (_, i) => const SizedBox(height: 10),
+        itemBuilder: (_, index) {
+          final message = messages[index];
+          return message.user.username == user.username
+              ? RightMessage(message: message)
+              : LeftMessage(message: message);
+        },
+      ),
     );
   }
 }

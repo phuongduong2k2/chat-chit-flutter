@@ -1,18 +1,37 @@
 import 'package:flutter/material.dart';
 
-class MessageInput extends StatelessWidget {
+class MessageInput extends StatefulWidget {
   const MessageInput({super.key, required this.onSend});
 
-  final Function(String inputValue) onSend;
+  final void Function(String value) onSend;
+
+  @override
+  State<MessageInput> createState() => _MessageInputState();
+}
+
+class _MessageInputState extends State<MessageInput> {
+  final TextEditingController _controller = TextEditingController();
+
+  void _submit() {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+    widget.onSend(text);
+    _controller.clear();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final EdgeInsets safeAreaPadding = MediaQuery.paddingOf(context);
-    String inputValue = "";
+    final bottomPadding = MediaQuery.paddingOf(context).bottom;
 
     return Container(
       margin: EdgeInsets.only(
-        bottom: safeAreaPadding.bottom,
+        bottom: bottomPadding,
         left: 10,
         right: 10,
       ),
@@ -20,14 +39,14 @@ class MessageInput extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
-              onChanged: (value) => inputValue = value,
+              controller: _controller,
+              onSubmitted: (_) => _submit(),
+              textInputAction: TextInputAction.send,
             ),
           ),
           IconButton(
-            onPressed: () {
-              onSend(inputValue);
-            },
-            icon: Icon(Icons.send),
+            onPressed: _submit,
+            icon: const Icon(Icons.send),
           ),
         ],
       ),

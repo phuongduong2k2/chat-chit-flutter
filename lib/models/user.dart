@@ -1,3 +1,4 @@
+import 'package:chat_chit_flutter/core/app_constants.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'user.freezed.dart';
@@ -14,10 +15,8 @@ abstract class User with _$User {
   }) = _User;
 
   String get avatarUrl {
-    if (avatarName == null || (avatarName != null && avatarName!.isEmpty)) {
-      return "";
-    }
-    return "http://localhost:8082/api/v1/upload/files/$avatarName";
+    if (avatarName == null || avatarName!.isEmpty) return '';
+    return '${AppConstants.apiBaseUrl}${AppConstants.apiPrefix}/upload/files/$avatarName';
   }
 
   factory User.fromJson(Map<String, Object?> json) => _$UserFromJson(json);

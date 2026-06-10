@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:chat_chit_flutter/extensions/exception_extension.dart';
-import 'package:chat_chit_flutter/providers/user_provider.dart';
+import 'package:chat_chit_flutter/providers/user_notifier.dart';
 import 'package:chat_chit_flutter/screens/chat_screen.dart';
 import 'package:chat_chit_flutter/services/auth_service.dart';
 import 'package:chat_chit_flutter/utils/utils.dart';
@@ -18,52 +18,55 @@ class AuthScreen extends ConsumerStatefulWidget {
 }
 
 class _AuthScreenState extends ConsumerState<AuthScreen> {
-  final AuthService authService = AuthService();
+  final _authService = AuthService();
   bool _isLoginForm = true;
+  bool _isLoading = false;
 
   void _toggleForm() {
-    setState(() {
-      _isLoginForm = !_isLoginForm;
-    });
+    setState(() => _isLoginForm = !_isLoginForm);
   }
 
-  void _login(String email, String password) async {
+  Future<void> _login(String email, String password) async {
+    if (_isLoading) return;
+    setState(() => _isLoading = true);
     try {
-      final result = await authService.login(email: email, password: password);
+      final user = await _authService.login(email: email, password: password);
       if (!mounted) return;
-      ref.read(userProvider.notifier).setUser(result);
-      Navigator.of(
-        context,
-      ).push(
-        MaterialPageRoute(
-          builder: (ctx) => const ChatScreen(),
-        ),
+      ref.read(userProvider.notifier).setUser(user);
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const ChatScreen()),
       );
     } on Exception catch (error) {
       if (!mounted) return;
-      showSnackBar(context, error.cleanMessage, .error);
+      showSnackBar(context, error.cleanMessage, SnackBarType.error);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  void _createAccount(
+  Future<void> _createAccount(
     String email,
     String username,
     String password,
     File? image,
   ) async {
+    if (_isLoading) return;
+    setState(() => _isLoading = true);
     try {
-      final result = await authService.register(
+      final message = await _authService.register(
         email: email,
         username: username,
         password: password,
         image: image,
       );
       if (!mounted) return;
-      showSnackBar(context, result, .success);
+      showSnackBar(context, message, SnackBarType.success);
       _toggleForm();
     } on Exception catch (error) {
       if (!mounted) return;
-      showSnackBar(context, error.cleanMessage, .error);
+      showSnackBar(context, error.cleanMessage, SnackBarType.error);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -78,20 +81,21 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const Icon(
-                Icons.chat_bubble,
-                color: Colors.white,
-                size: 100,
-              ),
+              const Icon(Icons.chat_bubble, color: Colors.white, size: 100),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                     color: Colors.white,
                   ),
-                  padding: EdgeInsets.all(16),
-                  child: _isLoginForm
+                  padding: const EdgeInsets.all(16),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 80,
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : _isLoginForm
                       ? AuthForm(
                           onCreatePressed: _toggleForm,
                           onSubmit: _login,

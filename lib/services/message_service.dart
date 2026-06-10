@@ -1,34 +1,35 @@
+import 'package:chat_chit_flutter/core/app_constants.dart';
 import 'package:chat_chit_flutter/models/message.dart';
 import 'package:chat_chit_flutter/services/api_client_service.dart';
 
 class MessageService {
-  static ApiClientService apiClientService = ApiClientService();
+  MessageService({ApiClientService? apiClient})
+      : _apiClient = apiClient ?? ApiClientService();
 
-  Future<void> sendMessage(
-    String message,
-    String username,
-    String createdAt,
-  ) async {
-    try {
-      await apiClientService.post(
-        endpoint: '/api/v1/messages/$username',
-        body: {"message": message, "createdAt": createdAt},
-      );
-    } on Exception catch (_) {
-      rethrow;
-    }
+  final ApiClientService _apiClient;
+
+  Future<void> sendMessage({
+    required String message,
+    required String username,
+    required DateTime createdAt,
+  }) async {
+    await _apiClient.post(
+      endpoint: '${AppConstants.apiPrefix}/messages/$username',
+      body: {
+        'message': message,
+        'createdAt': createdAt.toIso8601String(),
+      },
+    );
   }
 
   Future<List<Message>> getAllMessages() async {
-    try {
-      final response = await apiClientService.get(
-        endpoint: "/api/v1/messages",
-        key: "messages",
-      );
-      final List<dynamic> jsonList = response;
-      return jsonList.map((json) => Message.fromJson(json)).toList();
-    } on Exception catch (_) {
-      rethrow;
-    }
+    final response = await _apiClient.get<dynamic>(
+      endpoint: '${AppConstants.apiPrefix}/messages',
+      key: 'messages',
+    );
+    final list = response as List<dynamic>;
+    return list
+        .map((json) => Message.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 }

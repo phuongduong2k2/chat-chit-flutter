@@ -11,14 +11,13 @@ class CreateAccountForm extends StatefulWidget {
     required this.onLoginPressed,
   });
 
-  final Function(
+  final void Function(
     String email,
     String username,
     String password,
     File? profileImage,
-  )
-  onSubmit;
-  final Function() onLoginPressed;
+  ) onSubmit;
+  final VoidCallback onLoginPressed;
 
   @override
   State<CreateAccountForm> createState() => _CreateAccountFormState();
@@ -26,31 +25,20 @@ class CreateAccountForm extends StatefulWidget {
 
 class _CreateAccountFormState extends State<CreateAccountForm> {
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
   File? _profileImage;
-  final TextEditingController _emailController = TextEditingController(
-    text: "",
-  );
-  final TextEditingController _usernameController = TextEditingController(
-    text: "",
-  );
-  final TextEditingController _passwordController = TextEditingController(
-    text: "",
-  );
 
-  void _selectProfileImage() async {
-    final picker = ImagePicker();
-    final xFile = await picker.pickImage(source: .gallery);
+  Future<void> _selectProfileImage() async {
+    final xFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (xFile != null) {
-      setState(() {
-        _profileImage = File(xFile.path);
-      });
+      setState(() => _profileImage = File(xFile.path));
     }
   }
 
   void _submit() {
-    bool validate =
-        _formKey.currentState != null && _formKey.currentState!.validate();
-    if (validate) {
+    if (_formKey.currentState?.validate() ?? false) {
       widget.onSubmit(
         _emailController.text,
         _usernameController.text,
@@ -62,10 +50,10 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
 
   @override
   void dispose() {
-    super.dispose();
     _emailController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -75,44 +63,37 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
       child: Column(
         spacing: 8,
         children: [
-          ProfileImage(
-            image: _profileImage,
-            onTap: _selectProfileImage,
-          ),
+          ProfileImage(image: _profileImage, onTap: _selectProfileImage),
           TextFormField(
             controller: _emailController,
-            autovalidateMode: .onUnfocus,
+            keyboardType: TextInputType.emailAddress,
+            autovalidateMode: AutovalidateMode.onUnfocus,
             validator: (value) =>
-                value!.isEmpty ? "Email address is required" : null,
-            decoration: InputDecoration(
-              label: const Text("Email Address"),
-            ),
+                (value == null || value.isEmpty) ? 'Email address is required' : null,
+            decoration: const InputDecoration(label: Text('Email Address')),
           ),
           TextFormField(
             controller: _usernameController,
-            autovalidateMode: .onUnfocus,
+            autovalidateMode: AutovalidateMode.onUnfocus,
             validator: (value) =>
-                value!.isEmpty ? "Username is required" : null,
-            decoration: InputDecoration(
-              label: const Text("Username"),
-            ),
+                (value == null || value.isEmpty) ? 'Username is required' : null,
+            decoration: const InputDecoration(label: Text('Username')),
           ),
           TextFormField(
             controller: _passwordController,
-            autovalidateMode: .onUnfocus,
+            obscureText: true,
+            autovalidateMode: AutovalidateMode.onUnfocus,
             validator: (value) =>
-                value!.isEmpty ? "Password is required" : null,
-            decoration: InputDecoration(
-              label: const Text("Password"),
-            ),
+                (value == null || value.isEmpty) ? 'Password is required' : null,
+            decoration: const InputDecoration(label: Text('Password')),
           ),
           ElevatedButton(
             onPressed: _submit,
-            child: const Text("Register"),
+            child: const Text('Register'),
           ),
           TextButton(
             onPressed: widget.onLoginPressed,
-            child: const Text("I already have an account"),
+            child: const Text('I already have an account'),
           ),
         ],
       ),

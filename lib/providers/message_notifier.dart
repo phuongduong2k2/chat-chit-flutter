@@ -6,18 +6,16 @@ part 'message_notifier.g.dart';
 
 @riverpod
 class MessageNotifier extends _$MessageNotifier {
-  final MessageService messageService = MessageService();
+  late final MessageService _messageService;
 
   @override
   Future<List<Message>> build() async {
-    return await messageService.getAllMessages();
+    _messageService = MessageService();
+    return _messageService.getAllMessages();
   }
 
-  void add(Message message) async {
-    final previousState = await future;
-    state = AsyncData([
-      ...previousState,
-      message,
-    ]);
+  void add(Message message) {
+    final previous = state.asData?.value ?? [];
+    state = AsyncData([...previous, message]);
   }
 }

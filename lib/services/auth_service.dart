@@ -1,23 +1,25 @@
 import 'dart:io';
 
+import 'package:chat_chit_flutter/core/app_constants.dart';
 import 'package:chat_chit_flutter/models/user.dart';
 import 'package:chat_chit_flutter/services/api_client_service.dart';
 
 class AuthService {
-  static ApiClientService apiClientService = ApiClientService();
+  AuthService({ApiClientService? apiClient})
+      : _apiClient = apiClient ?? ApiClientService();
 
-  Future<User> login({required String email, required String password}) async {
-    try {
-      final result = await apiClientService.post(
-        endpoint: "/api/v1/auth/login",
-        body: {"email": email, "password": password},
-        fromJson: User.fromJson,
-        key: "userData",
-      );
-      return result;
-    } on Exception catch (_) {
-      rethrow;
-    }
+  final ApiClientService _apiClient;
+
+  Future<User> login({
+    required String email,
+    required String password,
+  }) async {
+    return _apiClient.post(
+      endpoint: '${AppConstants.apiPrefix}/auth/login',
+      body: {'email': email, 'password': password},
+      fromJson: User.fromJson,
+      key: 'userData',
+    );
   }
 
   Future<String> register({
@@ -26,28 +28,23 @@ class AuthService {
     required String password,
     File? image,
   }) async {
-    try {
-      String? imageName;
-      if (image != null) {
-        imageName = await apiClientService.postFile(
-          endpoint: "/api/v1/upload",
-          fileToUpload: image,
-          key: "fileName",
-        );
-      }
-      final result = await apiClientService.post(
-        endpoint: "/api/v1/auth/register",
-        body: {
-          "email": email,
-          "username": username,
-          "password": password,
-          "avatarUrl": imageName,
-        },
-        key: 'message',
+    String? imageName;
+    if (image != null) {
+      imageName = await _apiClient.postFile(
+        endpoint: '${AppConstants.apiPrefix}/upload',
+        fileToUpload: image,
+        key: 'fileName',
       );
-      return result;
-    } on Exception catch (_) {
-      rethrow;
     }
+    return _apiClient.post(
+      endpoint: '${AppConstants.apiPrefix}/auth/register',
+      body: {
+        'email': email,
+        'username': username,
+        'password': password,
+        'avatarUrl': imageName,
+      },
+      key: 'message',
+    );
   }
 }
